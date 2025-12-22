@@ -1,0 +1,218 @@
+labor_ui <- function(id) {
+  ns <- NS(id)
+  
+  tagList(
+    
+    tags$style(HTML("
+      .pill-button.active {
+        background-color: #00C1FF !important;
+        color: white !important;
+      }
+      .pill-button:hover {
+        opacity: 0.85;
+      }
+      
+      .component-btn.active {
+        background-color: #00C1FF !important;
+        color: white !important;
+      }
+      .component-btn:hover {
+        opacity: 0.85;
+      }
+    ")),
+    tags$script(HTML("
+      $(document).on('click', '.topic-page .pill-button', function(e) {
+        var $container = $(this).closest('.topic-page');
+        $container.find('.pill-button').removeClass('active');
+        $(this).addClass('active');
+      });
+      $(document).on('click', '.component-btn', function(e) {
+        $('.component-btn').removeClass('active');
+        $(this).addClass('active');
+      });
+    ")),
+    
+    tags$div(class = "topic-page",
+             
+             # Header across the full page
+             fluidRow(
+               column(
+                 width = 12,
+                 tags$div(
+                   style = "margin-bottom: 20px;",
+                   h1(class = "topic-title", "Non-salary Labor Costs"),
+                   p(class = "topic-subtitle",
+                     "Bonuses, social contributions, severance, and other employer-paid costs")
+                 )
+               )
+             ),
+             
+             # ============================================================
+             # LAYOUT PRINCIPAL (2 COLUMNAS)
+             # ============================================================
+             fluidRow(
+              
+               # ----------------------------------------------------------
+               # COLUMNA IZQUIERDA
+               # ----------------------------------------------------------
+              column(
+                width = 3,
+                class = "left-panel",
+                 # -------- FILTERS --------
+                 tags$div(
+                    style = "margin-bottom: 30px;",
+                    h3("FILTERS", style = "color: #1e3a5f; font-weight: bold; margin-top: 0; margin-bottom: 6px;"),
+                    tags$hr(style = "border-top: 2px solid #00b8d4; margin-top: 0; margin-bottom: 14px;"),
+                    tags$p(
+                      style = "font-size: 13px; line-height: 1.5; margin-bottom: 15px;",
+                      "Use these filters to compare non salary labor costs across countries: (1) The first option allows you to decompose the total costs by by who pays or by benefit line, (2) the second option you can see the costs by workers of diferent levels as multiples of the minum wate and (3) compare the same worker wage level across countries."
+                    ),
+
+                    # ---- SUMMARY FILTER ----
+                    tags$div(
+                      style = "display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;",
+                      tags$span("Option 1 — Choose what to display:", style = "font-weight: bold; color: #b0b0b0; font-size: 14px;"),
+                      tags$div(
+                        style = "display: flex; flex-direction: column; gap: 8px;",
+                        tags$div(
+                          style = "display: flex; flex-direction: column; gap: 4px;",
+                          actionButton(ns("all"), "ALL",
+                                       class = "pill-button active",
+                                       style = "background-color: #e6f4ff; color: #0f3b66; border: 1px solid #0f3b66; border-radius: 20px; padding: 6px 18px; font-weight: 600;")
+                        ),
+                        tags$div(
+                          style = "display: flex; flex-direction: column; gap: 4px;",
+                          actionButton(ns("bonus"), "BONUSES AND BENEFITS",
+                                       class = "pill-button",
+                                       style = "background-color: #e6f4ff; color: #0f3b66; border: 1px solid #0f3b66; border-radius: 20px; padding: 6px 18px; font-weight: 600;"),
+                          
+                          tags$div(
+                            class = "component-wrapper-fixed",
+                            uiOutput(ns("bonus_buttons"))
+                          )
+                        ),
+                        tags$div(
+                          style = "display: flex; flex-direction: column; gap: 4px;",
+                          actionButton(ns("social"), "SOCIAL SECURITY CONTRIBUTIONS",
+                                       class = "pill-button",
+                                       style = "background-color: #e6f4ff; color: #0f3b66; border: 1px solid #0f3b66; border-radius: 20px; padding: 6px 18px; font-weight: 600;"),
+                          
+                          tags$div(
+                            class = "component-wrapper-fixed",
+                            uiOutput(ns("component_buttons"))
+                          )
+                        ),
+                        tags$div(
+                          style = "display: flex; flex-direction: column; gap: 4px;",
+                          actionButton(ns("payroll"), "PAYROLL TAXES",
+                                       class = "pill-button",
+                                       style = "background-color: #e6f4ff; color: #0f3b66; border: 1px solid #0f3b66; border-radius: 20px; padding: 6px 18px; font-weight: 600;")
+                        )
+                      ),
+                      tags$div(
+                        style = "display: flex; flex-direction: column; gap: 8px;",
+                        tags$span("Option 2 — Choose what to display:", style = "font-weight: bold; color: #b0b0b0; font-size: 14px;"),
+                        tags$div(
+                          style = "display: flex; flex-direction: column; gap: 4px;",
+                          actionButton(ns("btn_total"), "TOTAL",
+                                       class = "pill-button active",
+                                       style = "background-color: #e6f4ff; color: #0f3b66; border: 1px solid #0f3b66; border-radius: 20px; padding: 6px 18px; font-weight: 600;")
+                        ),
+                        tags$div(
+                          style = "display: flex; flex-direction: column; gap: 4px;",
+                          actionButton(ns("btn_payer"), "BY PAYER",
+                                       class = "pill-button",
+                                       style = "background-color: #e6f4ff; color: #0f3b66; border: 1px solid #0f3b66; border-radius: 20px; padding: 6px 18px; font-weight: 600;")
+                        ),
+                        tags$div(
+                          style = "display: flex; flex-direction: column; gap: 4px;",
+                          actionButton(ns("btn_component"), "BY COMPONENT",
+                                       class = "pill-button",
+                                       style = "background-color: #e6f4ff; color: #0f3b66; border: 1px solid #0f3b66; border-radius: 20px; padding: 6px 18px; font-weight: 600;")
+                        )
+                      )
+                    ),
+
+                    # ---- WAGE FILTER ----
+                    tags$div(
+                      style = "display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;",
+                      tags$span("Option 3 — Select the worker wage level:", style = "font-weight: bold; color: #b0b0b0; font-size: 14px;"),
+                      tags$p(
+                        "Hold the job constant and change only earnings: choose a multiple of the minimum wage (MW) to see how statutory costs scale with pay.",
+                        style = "font-size: 12px; color: #555; margin: 0 0 4px 0;"
+                      ),
+                      div(
+                        class = "pretty-select",
+                        selectInput(
+                          inputId = ns("mw_selection"),
+                          label = NULL,
+                          choices = c(
+                            "1 MW" = "1sm",
+                            "2 MW" = "2sm",
+                            "5 MW" = "5sm",
+                            "10 MW" = "10sm",
+                            "15 MW" = "15sm"
+                          ),
+                          selected = "1sm",
+                          width = "100%"
+                        )
+                      )
+                    ),
+
+                    # ---- COUNTRY FILTER ----
+                    tags$div(
+                      style = "margin-top: 5px;",
+                      tags$span("Option 4 — Choose a country:", style = "font-weight: bold; color: #b0b0b0; font-size: 14px;"),
+                      tags$p(
+                        "Switch countries to see how different regulatory frameworks change the composition and level of non-wage costs.",
+                        style = "font-size: 12px; color: #555; margin: 0 0 6px 0;"
+                      ),
+                      uiOutput(ns("country_selection"))
+                    )
+                  ),
+
+
+                 
+                
+                 # -------- DOWNLOAD & SHARE BUTTONS --------
+                 tags$div(
+                   style = "display: flex; gap: 10px;",
+                 
+                   downloadButton(
+                     outputId = ns("download_df"),
+                     label = "DOWNLOAD",
+                     style = "background-color: #1e3a5f; color: white; border-radius: 25px; padding: 10px 20px; font-weight: bold; border: none;"
+                     
+                   )
+                 )
+               ),
+               
+               # ----------------------------------------------------------
+               # COLUMNA DERECHA
+               # ----------------------------------------------------------
+               column(
+                 width = 9,
+                 class = "right-panel",
+                 style = "padding-top: 34px;",
+                 tags$hr(style = "border-top: 2px solid #00b8d4; margin-top: 0; margin-bottom: 14px;"),
+                 
+                 # -------- GRÁFICO --------
+                 plotlyOutput(ns("plot"), height = "520px"),
+                 div(
+                   style = "margin-top:30px;",
+                   reactable::reactableOutput(ns("tabla_detalle"))
+                 ),
+                 tags$div(
+                   style = "display: flex; gap: 10px;",
+                   downloadButton(
+                     outputId = ns("download_table"),
+                     label = "DOWNLOAD TABLE",
+                     style = "background-color: #1e3a5f; color: white; border-radius: 25px; padding: 10px 20px; font-weight: bold; border: none;"
+                     
+                   )
+                 )
+               )
+             )
+    )
+  )
+}
