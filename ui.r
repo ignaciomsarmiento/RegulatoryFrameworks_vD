@@ -346,11 +346,11 @@ shinyUI(
                   href = "#",
                   class = "landing-card",
                   onclick = "Shiny.setInputValue('topic_selected', 'labor', {priority: 'event'}); return false;",
-                  tags$div(class = "landing-card-image", style = "background-image: url('topic-labor.jpg');"),
+                  tags$div(class = "topic-card-image labor-img"),
                   tags$div(
                     class = "landing-card-body",
                     h3("Non-Salary Labor Costs"),
-                    p("Explore non-wage labor costs employers incur beyond direct wages, including legally required social contributions by payers.")
+                    p("Explore non-wage labor costs")
                   )
                 ),
                 
@@ -358,7 +358,7 @@ shinyUI(
                   href = "#",
                   class = "landing-card",
                   onclick = "document.querySelector('a[data-value=\"forthcoming\"]').click(); return false;",
-                  tags$div(class = "landing-card-image", style = "background-image: url('topic-minimu.jpg');"),
+                  tags$div(class = "topic-card-image minwage-img"),
                   tags$div(
                     class = "landing-card-body",
                     h3("Minimum wages"),
@@ -370,7 +370,7 @@ shinyUI(
                   href = "#",
                   class = "landing-card",
                   onclick = "document.querySelector('a[data-value=\"forthcoming\"]').click(); return false;",
-                  tags$div(class = "landing-card-image", style = "background-image: url('topic-business.jpg');"),
+                  tags$div(class = "topic-card-image btax-img"),
                   tags$div(
                     class = "landing-card-body",
                     h3("Business taxes"),

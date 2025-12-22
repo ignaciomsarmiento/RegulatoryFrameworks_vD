@@ -26,6 +26,8 @@
   --fs-nav-card-title: 20px;
   --fs-nav-card-desc: 14px;
   --fs-page-hamburger: 20px;
+  --fs-explore-card-title: 32px;
+  --fs-explore-card-desc: 18px;
 }
 
 
@@ -239,7 +241,6 @@ body {
 }
 
 
-
    /* =========================
    HAMBURGER MENU
    ========================= */
@@ -313,14 +314,7 @@ body {
 }
 
 .hero-banner::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M0,50 Q25,30 50,50 T100,50" stroke="rgba(255,255,255,0.1)" fill="none" stroke-width="2"/></svg>');
-  opacity: 0.3;
+  content: none;
 }
 
 /* ==========================================
@@ -366,7 +360,7 @@ body {
   gap: 150px; /* horizontal separation between image and text */
   align-items: flex-start;
   flex-wrap: wrap;
-  margin-bottom: 60px;
+  margin-bottom: 120px;
 }
 
 .landing-hero-image {
@@ -414,6 +408,7 @@ body {
 .landing-hero-eyebrow-col {
   flex: 0 0 140px;
   max-width: 160px;
+  padding-top: 10px;
 }
 
 .landing-hero-title-col {
@@ -421,7 +416,7 @@ body {
 }
 
 .landing-hero-title {
-  margin-top: -2px;
+  margin-top: 0;
 }
 
 .landing-eyebrow {
@@ -433,8 +428,8 @@ body {
   font-family: 'National Park', sans-serif;
   font-style: normal;
   color: var(--wbg-solid-blue, #024);
-  line-height: normal;
-  margin-bottom: 8px;
+  line-height: 1;
+  margin-bottom: 0;
 }
 
 .landing-hero-title {
@@ -507,7 +502,9 @@ body {
 }
 
 .landing-card {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
   background: #fff;
   border-radius: 14px;
   overflow: hidden;
@@ -524,13 +521,17 @@ body {
 }
 
 .landing-card-image {
-  height: 140px;
+  height: 170px;
   background-size: cover;
   background-position: center;
 }
 
 .landing-card-body {
   padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .landing-card-body h3 {
@@ -586,26 +587,32 @@ body {
    ========================================== */
 .topic-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);  /* 3 columnas en desktop */
+  grid-template-columns: repeat(3, 1fr);
   gap: 30px;
   margin-top: 40px;
+
+  /* clave para que todas puedan estirarse */
+  align-items: stretch;
 }
 
-/* En móvil: 1 columna */
 @media (max-width: 768px) {
-  .topic-grid {
-    grid-template-columns: 1fr;  /* 1 columna en móvil */
-  }
+  .topic-grid { grid-template-columns: 1fr; }
 }
 
+/* si tus cards son <a>, esto ayuda a que no se queden “encogidas” */
 .topic-card {
   display: flex;
   flex-direction: column;
+
+  height: 100%;
+  min-height: 460px; /* un poco más largas */
+
   background: var(--white);
   border: 1px solid var(--border-gray);
   border-radius: 14px;
   cursor: pointer;
-  transition: all 0.3s ease;
+
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
   position: relative;
   overflow: hidden;
   box-shadow: 0 8px 18px rgba(0, 34, 68, 0.08);
@@ -613,7 +620,7 @@ body {
 
 .topic-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 193, 255, 0.18);
+  box-shadow: 0 12px 24px rgba(0, 34, 68, 0.18);
   border-color: var(--bright-blue);
 }
 
@@ -628,31 +635,74 @@ body {
   border-color: var(--border-gray);
 }
 
+/* ↓↓↓ mitad de alto de la franja */
 .topic-card-image {
   width: 100%;
-  height: 140px;
+  height: 70px;
+
+  position: relative;
+  overflow: hidden;
+
+  background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
 }
 
+/* sin olas */
+.topic-card-image::after {
+  content: none;
+}
+
+/* =========================
+   TOPIC BACKGROUNDS
+   - Gradiente de izquierda a derecha
+   - “Color más rápido”: stops comprimidos
+   ========================= */
+
+/* -------- LABOR -------- */
 .topic-card-image.labor-img {
-  background-image: linear-gradient(135deg, #0062FF 0%, #2B8CFF 50%, #6CCBFF 100%);
-  background-color: #0062FF;
+  background-color: #024;
+  background-image: linear-gradient(
+    to right,
+    #AFB2B8 0%,
+    #726AA8 40%,
+    #335B8E 65%,
+    #024 100%
+  );
 }
 
+/* -------- MIN WAGES (base #A71261) -------- */
 .topic-card-image.minwage-img {
-  background-image: linear-gradient(135deg, #FF8743 0%, #FFA45F 55%, #FFD0A6 100%);
-  background-color: #FF8743;
+  background-color: #A71261;
+  background-image: linear-gradient(
+    to right,
+    #E9B7D3 0%,
+    #C03A82 50%,
+    #A71261 100%
+  );
 }
 
+/* -------- BUSINESS TAXES (base #9D906C) -------- */
 .topic-card-image.btax-img {
-  background-image: linear-gradient(135deg, #B62650 0%, #D64A6C 55%, #F29CB5 100%);
-  background-color: #B62650;
+  background-color: #9D906C;
+  background-image: linear-gradient(
+    to right,
+    #E6E0CF 0%,
+    #B5AA8A 50%,
+    #9D906C 100%
+  );
 }
 
+/* Body largo + texto centrado */
 .topic-card-body {
-  padding: 20px 22px 24px;
+  padding: 22px 22px 26px;
+
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  text-align: center;
 }
 
 .topic-card-title {
@@ -681,6 +731,7 @@ body {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  margin: 0 auto;
 }
 
 /* ==========================================
@@ -914,6 +965,98 @@ body {
 }
 
 
+/* ==========================================
+   EXPLORE MORE (horizontal cards like screenshot)
+   Works with your existing ui.R:
+   .landing-card-grid.small > a.landing-card
+   ========================================== */
+
+/* Asegura que la grilla no deforme */
+.landing-card-grid.small {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  align-items: stretch;
+}
+
+@media (max-width: 768px) {
+  .landing-card-grid.small {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* La card ahora es horizontal */
+.landing-card-grid.small .landing-card {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0;
+
+  width: 100%;
+  min-height: 140px;
+
+  background: var(--white);
+  border: 1px solid rgba(0, 34, 68, 0.10);
+  border-radius: 12px;
+
+  padding: 0;
+  text-decoration: none;
+  overflow: hidden;
+
+  box-shadow: 0 8px 18px rgba(0, 34, 68, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.landing-card-grid.small .landing-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(0, 34, 68, 0.14);
+  border-color: rgba(0, 34, 68, 0.18);
+}
+
+/* Imagen a la izquierda */
+.landing-card-grid.small .landing-card-image {
+  flex: 0 0 132px;
+  width: 132px;
+  height: 100%;
+
+  border-radius: 12px 0 0 12px;
+  overflow: hidden;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Texto a la derecha */
+.landing-card-grid.small .landing-card-body {
+  flex: 1;
+  min-width: 0;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.landing-card-grid.small .landing-card-body h3 {
+  margin: 0 0 6px 0;
+  font-size: var(--fs-explore-card-title);
+  line-height: 1.1;
+  color: var(--solid-blue);
+}
+
+.landing-card-grid.small .landing-card-body p {
+  margin: 0;
+  font-size: var(--fs-explore-card-desc);
+  line-height: 1.35;
+  color: var(--solid-blue-60);
+}
+
+/* ==========================================
+   EXPLORE MORE – compact buttons
+   ========================================== */
+
+/* La grilla ahora centra los botones */
+/* (removed) */
 
 /* ADICIONALES JULIAN */
 
@@ -947,22 +1090,6 @@ body {
   white-space: nowrap !important;
 }
 
-/* ----------------------------------------------------------
-   info-icon
------------------------------------------------------------*/
-
-.info-icon {
-  text-transform: none !important;
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  line-height: 14px;
-  text-align: center;
-  border-radius: 50%;
-  border: 1px solid #0f3b66;
-  font-size: 11px;
-}
-
 
 /* ----------------------------------------------------------
    SELECT MUY PEQUEÑO
@@ -993,7 +1120,6 @@ body {
 .small-select .selectize-dropdown {
   font-size: 10px !important;
 }
-
 
 
 /* ======== SELECT INPUT LINDO ========= */

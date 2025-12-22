@@ -32,20 +32,19 @@ labor_ui <- function(id) {
       });
     ")),
     
-    tags$div(class = "topic-page",
-             
-             # Header across the full page
-             fluidRow(
-               column(
-                 width = 12,
-                 tags$div(
-                   style = "margin-bottom: 20px;",
-                   h1(class = "topic-title", "Non-salary Labor Costs"),
-                   p(class = "topic-subtitle",
-                     "Bonuses, social contributions, severance, and other employer-paid costs")
-                 )
-               )
-             ),
+    tags$div(class = "topic-page", # nolint
+  # Header across the full page
+    fluidRow(
+      column(
+      width = 12,
+        tags$div(
+        style = "margin-bottom: 20px; background: #fff; padding: 16px; border-radius: 12px;",
+        h1(class = "topic-title", "Non-salary Labor Costs"),
+        p(class = "topic-subtitle",
+        "Explore non-wage labor costs employers incur beyond direct wages, including legally required social contributions by payer (employer vs. employee) and by benefit component. Analyze how these costs vary across countries and wage levels.")
+        )
+    )
+  ),
              
              # ============================================================
              # LAYOUT PRINCIPAL (2 COLUMNAS)
