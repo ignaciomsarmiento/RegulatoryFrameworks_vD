@@ -34,6 +34,10 @@ labor_server <- function(input, output, session) {
   selected_groupE <- reactiveVal("pensions")
   option1_selected <- reactiveVal(FALSE)
   table_visible <- reactiveVal(FALSE)
+  plotly_font_family <- "National Park, 'Source Sans Pro', -apple-system, BlinkMacSystemFont, sans-serif"
+  apply_plot_font <- function(fig) {
+    fig %>% layout(font = list(family = plotly_font_family))
+  }
   
   
   output$country_selection <- renderUI({
@@ -238,7 +242,7 @@ labor_server <- function(input, output, session) {
             plot_bgcolor  = "rgba(0,0,0,0)"
           )
         
-        return(fig)
+        return(apply_plot_font(fig))
       }
       
       else{
@@ -331,7 +335,7 @@ labor_server <- function(input, output, session) {
             plot_bgcolor  = "rgba(0,0,0,0)"
           )
         
-        return(fig)
+        return(apply_plot_font(fig))
       }
       
     }
@@ -434,7 +438,7 @@ labor_server <- function(input, output, session) {
           plot_bgcolor  = "rgba(0,0,0,0)"
         )
       
-      return(fig)
+      return(apply_plot_font(fig))
     }
     
     # ---- ALL By Payer ----
@@ -543,7 +547,7 @@ labor_server <- function(input, output, session) {
               t = 20
             )
           )
-        return(fig)
+        return(apply_plot_font(fig))
       }
       
       else{
@@ -647,7 +651,7 @@ labor_server <- function(input, output, session) {
               t = 20
             )
           )
-        return(fig)
+        return(apply_plot_font(fig))
       }
       
     }
@@ -753,7 +757,7 @@ labor_server <- function(input, output, session) {
           )
         )
       
-      return(fig)
+      return(apply_plot_font(fig))
     }
     
     # ---- ALL by Component ----
@@ -867,7 +871,7 @@ labor_server <- function(input, output, session) {
               t = 20
             )
           )
-        return(fig)
+        return(apply_plot_font(fig))
       }
       else{
         df_long <- df_non_salary_component %>%
@@ -974,7 +978,7 @@ labor_server <- function(input, output, session) {
               t = 20
             )
           )
-        return(fig)
+        return(apply_plot_font(fig))
       }
     }
     
@@ -1078,7 +1082,7 @@ labor_server <- function(input, output, session) {
           )
         )
       
-      return(fig)
+      return(apply_plot_font(fig))
     }
     
     # ---- bonuses and benefits/Payroll and Total ----
@@ -1186,7 +1190,7 @@ labor_server <- function(input, output, session) {
             plot_bgcolor  = "rgba(0,0,0,0)"
           )
         
-        return(fig)
+        return(apply_plot_font(fig))
     }
     else{
         path_component=paste0("data/non_salary/",paste0(group0,"_all.rds"))
@@ -1289,7 +1293,7 @@ labor_server <- function(input, output, session) {
             plot_bgcolor  = "rgba(0,0,0,0)"
           )
         
-        return(fig)
+        return(apply_plot_font(fig))
     }
     }
     
@@ -1398,7 +1402,7 @@ labor_server <- function(input, output, session) {
             plot_bgcolor  = "rgba(0,0,0,0)"
           )
         
-        return(fig)
+        return(apply_plot_font(fig))
     }
     
     # ---- bonuses and benefits and Components ----
@@ -1515,7 +1519,7 @@ labor_server <- function(input, output, session) {
               t = 20
             )
           )
-        return(fig)
+        return(apply_plot_font(fig))
        
       }
       else{
@@ -1630,7 +1634,7 @@ labor_server <- function(input, output, session) {
               t = 20
             )
           )
-        return(fig)
+        return(apply_plot_font(fig))
       }
       
     }
@@ -1766,7 +1770,7 @@ labor_server <- function(input, output, session) {
             plot_bgcolor  = "rgba(0,0,0,0)"
           )
         
-        return(fig)
+        return(apply_plot_font(fig))
       }
       else{
         if(groupC=="bonuses_and_benefits" & groupD!="all_bonuses"){
@@ -1898,7 +1902,7 @@ labor_server <- function(input, output, session) {
             plot_bgcolor  = "rgba(0,0,0,0)"
           )
         
-        return(fig)
+        return(apply_plot_font(fig))
       }
       
     }
@@ -2037,7 +2041,7 @@ labor_server <- function(input, output, session) {
           plot_bgcolor  = "rgba(0,0,0,0)"
         )
       
-      return(fig)
+      return(apply_plot_font(fig))
     }
     
   })
@@ -2155,10 +2159,14 @@ labor_server <- function(input, output, session) {
           lineHeight = "1.35",
           fontSize = "12px",
           padding = "6px",
-          textAlign = "justify"
+          textAlign = "justify",
+          fontFamily = plotly_font_family
         )
       ),
-      
+      theme = reactable::reactableTheme(
+        style = list(fontFamily = plotly_font_family),
+        headerStyle = list(fontFamily = plotly_font_family)
+      ),
       bordered = TRUE,
       striped = TRUE,
       highlight = TRUE,
