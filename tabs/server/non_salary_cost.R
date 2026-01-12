@@ -2191,11 +2191,14 @@ labor_server <- function(input, output, session) {
     }
 
     tags$div(
+      class = "option2-group",
       style = "display: flex; flex-direction: column; gap: 8px;",
-      tags$span("Option 2:", style = "font-weight: bold; color: #b0b0b0; font-size: 14px;"),
+      tags$span("Explore by subcomponents:", style = "font-weight: bold; color: #b0b0b0; font-size: 14px;"),
       if ("total" %in% valid_choices) option_button("btn_total", "TOTAL", "total"),
       if ("payer" %in% valid_choices) option_button("btn_payer", "BY PAYER", "payer"),
-      if ("component" %in% valid_choices) option_button("btn_component", "BY COMPONENT", "component")
+      if ("component" %in% valid_choices && group0 != "social") {
+        option_button("btn_component", "BY COMPONENT", "component")
+      }
     )
   })
   
@@ -2217,7 +2220,7 @@ labor_server <- function(input, output, session) {
         # ---- titulo ----
         div(
           tags$div(
-            "Social Security Contributions",
+            "Social Security Contributions Components",
             style = "font-weight: bold; color: #b0b0b0; font-size: 14px; margin-bottom: 5px;"
           )
         ),

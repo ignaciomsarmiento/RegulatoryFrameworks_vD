@@ -21,8 +21,13 @@ labor_ui <- function(id) {
       }
     ")),
     tags$script(HTML("
-      $(document).on('click', '.topic-page .pill-button', function(e) {
-        var $container = $(this).closest('.topic-page');
+      $(document).on('click', '.topic-page .option1-group .pill-button', function(e) {
+        var $container = $(this).closest('.option1-group');
+        $container.find('.pill-button').removeClass('active');
+        $(this).addClass('active');
+      });
+      $(document).on('click', '.topic-page .option2-group .pill-button', function(e) {
+        var $container = $(this).closest('.option2-group');
         $container.find('.pill-button').removeClass('active');
         $(this).addClass('active');
       });
@@ -69,8 +74,9 @@ labor_ui <- function(id) {
 
                     # ---- SUMMARY FILTER ----
                     tags$div(
+                      class = "option1-group",
                       style = "display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;",
-                      tags$span("Option 1:", style = "font-weight: bold; color: #b0b0b0; font-size: 14px;"),
+                      #tags$span("Option 1:", style = "font-weight: bold; color: #b0b0b0; font-size: 14px;"),
                       tags$div(
                         style = "display: flex; flex-direction: column; gap: 8px;",
                         tags$div(
@@ -83,23 +89,13 @@ labor_ui <- function(id) {
                           style = "display: flex; flex-direction: column; gap: 4px;",
                           actionButton(ns("bonus"), "BONUSES AND BENEFITS",
                                        class = "pill-button",
-                                       style = "background-color: #e6f4ff; color: #0f3b66; border: 1px solid #0f3b66; border-radius: 20px; padding: 6px 18px; font-weight: 600;"),
-                          
-                          tags$div(
-                            class = "component-wrapper-fixed",
-                            uiOutput(ns("bonus_buttons"))
-                          )
+                                       style = "background-color: #e6f4ff; color: #0f3b66; border: 1px solid #0f3b66; border-radius: 20px; padding: 6px 18px; font-weight: 600;")
                         ),
                         tags$div(
                           style = "display: flex; flex-direction: column; gap: 4px;",
                           actionButton(ns("social"), "SOCIAL SECURITY CONTRIBUTIONS",
                                        class = "pill-button",
-                                       style = "background-color: #e6f4ff; color: #0f3b66; border: 1px solid #0f3b66; border-radius: 20px; padding: 6px 18px; font-weight: 600;"),
-                          
-                          tags$div(
-                            class = "component-wrapper-fixed",
-                            uiOutput(ns("component_buttons"))
-                          )
+                                       style = "background-color: #e6f4ff; color: #0f3b66; border: 1px solid #0f3b66; border-radius: 20px; padding: 6px 18px; font-weight: 600;")
                         ),
                         tags$div(
                           style = "display: flex; flex-direction: column; gap: 4px;",
@@ -107,14 +103,19 @@ labor_ui <- function(id) {
                                        class = "pill-button",
                                        style = "background-color: #e6f4ff; color: #0f3b66; border: 1px solid #0f3b66; border-radius: 20px; padding: 6px 18px; font-weight: 600;")
                         )
-                      ),
-                      uiOutput(ns("option2_buttons"))
+                      )
+                    ),
+                    uiOutput(ns("option2_buttons")),
+                    tags$div(
+                      class = "component-wrapper-fixed",
+                      uiOutput(ns("bonus_buttons")),
+                      uiOutput(ns("component_buttons"))
                     ),
 
                     # ---- WAGE FILTER ----
                     tags$div(
                       style = "display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;",
-                      tags$span("Option 3:", style = "font-weight: bold; color: #b0b0b0; font-size: 14px;"),
+                      tags$span("Minimum Wage filters:", style = "font-weight: bold; color: #b0b0b0; font-size: 14px;"),
                       tags$p(
                         "Hold the job constant and change only earnings: choose a multiple of the minimum wage (MW) to see how statutory costs scale with pay.",
                         style = "font-size: 12px; color: #555; margin: 0 0 4px 0;"
@@ -140,7 +141,7 @@ labor_ui <- function(id) {
                     # ---- COUNTRY FILTER ----
                     tags$div(
                       style = "margin-top: 5px;",
-                      tags$span("Option 4:", style = "font-weight: bold; color: #b0b0b0; font-size: 14px;"),
+                      tags$span("Country filters:", style = "font-weight: bold; color: #b0b0b0; font-size: 14px;"),
                       tags$p(
                         "Switch countries to see how different regulatory frameworks change the composition and level of non-wage costs.",
                         style = "font-size: 12px; color: #555; margin: 0 0 6px 0;"
