@@ -83,24 +83,28 @@ labor_ui <- function(id) {
                           style = "display: flex; flex-direction: column; gap: 4px;",
                           actionButton(ns("all"), "ALL",
                                        class = "pill-button active",
+                                       title = "Show total non-salary costs across all components.",
                                        style = "background-color: #e6f4ff; color: #0f3b66; border: 1px solid #0f3b66; border-radius: 20px; padding: 6px 18px; font-weight: 600;")
                         ),
                         tags$div(
                           style = "display: flex; flex-direction: column; gap: 4px;",
                           actionButton(ns("bonus"), "BONUSES AND BENEFITS",
                                        class = "pill-button",
+                                       title = "Focus on bonuses and benefits costs.",
                                        style = "background-color: #e6f4ff; color: #0f3b66; border: 1px solid #0f3b66; border-radius: 20px; padding: 6px 18px; font-weight: 600;")
                         ),
                         tags$div(
                           style = "display: flex; flex-direction: column; gap: 4px;",
                           actionButton(ns("social"), "SOCIAL SECURITY CONTRIBUTIONS",
                                        class = "pill-button",
+                                       title = "Focus on social security contributions.",
                                        style = "background-color: #e6f4ff; color: #0f3b66; border: 1px solid #0f3b66; border-radius: 20px; padding: 6px 18px; font-weight: 600;")
                         ),
                         tags$div(
                           style = "display: flex; flex-direction: column; gap: 4px;",
                           actionButton(ns("payroll"), "PAYROLL TAXES",
                                        class = "pill-button",
+                                       title = "Focus on payroll tax costs.",
                                        style = "background-color: #e6f4ff; color: #0f3b66; border: 1px solid #0f3b66; border-radius: 20px; padding: 6px 18px; font-weight: 600;")
                         )
                       )
@@ -159,10 +163,11 @@ labor_ui <- function(id) {
                  
                    downloadButton(
                      outputId = ns("download_df"),
-                     label = "DOWNLOAD",
+                     label = "Download Data",
                      style = "background-color: #1e3a5f; color: white; border-radius: 25px; padding: 10px 20px; font-weight: bold; border: none;"
                      
-                   )
+                   ),
+                   uiOutput(ns("download_table_ui"))
                  )
                ),
                
@@ -180,15 +185,6 @@ labor_ui <- function(id) {
                  div(
                    style = "margin-top:30px;",
                    reactable::reactableOutput(ns("tabla_detalle"))
-                 ),
-                 tags$div(
-                   style = "display: flex; gap: 10px;",
-                   downloadButton(
-                     outputId = ns("download_table"),
-                     label = "DOWNLOAD TABLE",
-                     style = "background-color: #1e3a5f; color: white; border-radius: 25px; padding: 10px 20px; font-weight: bold; border: none;"
-                     
-                   )
                  )
                )
              )

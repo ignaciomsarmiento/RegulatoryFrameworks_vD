@@ -33,6 +33,7 @@ labor_server <- function(input, output, session) {
   selected_groupD <- reactiveVal("all_bonuses")
   selected_groupE <- reactiveVal("pensions")
   option1_selected <- reactiveVal(FALSE)
+  table_visible <- reactiveVal(FALSE)
   
   
   output$country_selection <- renderUI({
@@ -2043,6 +2044,9 @@ labor_server <- function(input, output, session) {
   
   
   output$tabla_detalle<-reactable::renderReactable({
+    table_visible(FALSE)
+    ns_variables$df_final_tabla <- NULL
+
     groupA <- selected_groupA()
     groupC <- selected_groupC()
     groupD <- selected_groupD()
@@ -2051,6 +2055,7 @@ labor_server <- function(input, output, session) {
     con_sel=ns_variables$country_sel
     if(groupA!= "component" ) return()
     else{
+      data <- NULL
       if(groupA== "component" & groupC=="all_component"){
         return()
       }
@@ -2131,6 +2136,10 @@ labor_server <- function(input, output, session) {
         ns_variables$df_final_tabla=data
       }
     
+    if (is.null(data)) {
+      return()
+    }
+    table_visible(TRUE)
     
     reactable::reactable(
       data,
@@ -2180,7 +2189,7 @@ labor_server <- function(input, output, session) {
       "font-weight: 600;"
     )
 
-    option_button <- function(id, label, value) {
+    option_button <- function(id, label, value, title) {
       btn_class <- if (identical(selected_groupA(), value)) {
         "pill-button active"
       } else {
@@ -2189,7 +2198,7 @@ labor_server <- function(input, output, session) {
 
       tags$div(
         style = "display: flex; flex-direction: column; gap: 4px;",
-        actionButton(ns(id), label, class = btn_class, style = button_style)
+        actionButton(ns(id), label, class = btn_class, title = title, style = button_style)
       )
     }
 
@@ -2197,10 +2206,10 @@ labor_server <- function(input, output, session) {
       class = "option2-group",
       style = "display: flex; flex-direction: column; gap: 8px;",
       tags$span("Explore by subcomponents:", style = "font-weight: bold; color: #b0b0b0; font-size: 14px;"),
-      if ("total" %in% valid_choices) option_button("btn_total", "TOTAL", "total"),
-      if ("payer" %in% valid_choices) option_button("btn_payer", "BY PAYER", "payer"),
+      if ("total" %in% valid_choices) option_button("btn_total", "TOTAL", "total", "Show total non-salary costs."),
+      if ("payer" %in% valid_choices) option_button("btn_payer", "BY PAYER", "payer", "Split costs by payer (employer vs. employee)."),
       if ("component" %in% valid_choices && group0 != "social") {
-        option_button("btn_component", "BY COMPONENT", "component")
+        option_button("btn_component", "BY COMPONENT", "component", "Break down costs by component.")
       }
     )
   })
@@ -2454,6 +2463,17 @@ labor_server <- function(input, output, session) {
     },
     contentType = "text/csv"
   )
+
+  output$download_table_ui <- renderUI({
+    if (!table_visible()) {
+      return(NULL)
+    }
+    downloadButton(
+      outputId = ns("download_table"),
+      label = "DOWNLOAD TABLE",
+      style = "background-color: #1e3a5f; color: white; border-radius: 25px; padding: 10px 20px; font-weight: bold; border: none;"
+    )
+  })
   
   output$download_table <- downloadHandler(
     filename = function() {
