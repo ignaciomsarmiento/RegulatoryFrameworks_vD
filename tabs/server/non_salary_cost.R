@@ -32,6 +32,7 @@ labor_server <- function(input, output, session) {
   selected_groupC <- reactiveVal("all_component")
   selected_groupD <- reactiveVal("all_bonuses")
   selected_groupE <- reactiveVal("pensions")
+  option1_selected <- reactiveVal(FALSE)
   
   
   output$country_selection <- renderUI({
@@ -54,8 +55,31 @@ labor_server <- function(input, output, session) {
   observeEvent(input$btn_component,  { 
     selected_groupA("component") 
   })
+  observeEvent(input$all,  {
+    selected_group0("all")
+    selected_groupC("all_component")
+    option1_selected(TRUE)
+  })
   observeEvent(input$country_selection_user,  { 
     ns_variables$country_sel=input$country_selection_user
+  })
+
+  option2_choices_for_group <- function(group0) {
+    switch(
+      group0,
+      all = c("total", "payer", "component"),
+      bonuses_and_benefits = c("total", "component"),
+      social = c("component"),
+      payroll_taxes = c("total"),
+      c("total")
+    )
+  }
+
+  observeEvent(selected_group0(), {
+    valid_choices <- option2_choices_for_group(selected_group0())
+    if (!selected_groupA() %in% valid_choices) {
+      selected_groupA(valid_choices[1])
+    }
   })
   
   
@@ -74,12 +98,19 @@ labor_server <- function(input, output, session) {
   observeEvent(input$all_component,  { selected_groupC("all_component") })
   observeEvent(input$bonus,  { 
     selected_groupC("bonuses_and_benefits")
-    selected_group0("bonuses_and_benefits") 
+    selected_group0("bonuses_and_benefits")
+    option1_selected(TRUE)
   })
   observeEvent(input$social,  { 
-    selected_group0("social") 
+    selected_group0("social")
+    selected_groupC("social")
+    option1_selected(TRUE)
   })
-  observeEvent(input$payroll, { selected_group0("payroll_taxes") })
+  observeEvent(input$payroll, {
+    selected_group0("payroll_taxes")
+    selected_groupC("all_component")
+    option1_selected(TRUE)
+  })
   observeEvent(input$pensions,  { selected_groupE("pensions") })
   observeEvent(input$health, { selected_groupE("health") })
   observeEvent(input$occupational_risk, { selected_groupE("occupational_risk") })
@@ -2128,6 +2159,44 @@ labor_server <- function(input, output, session) {
     
 } 
     
+  })
+  
+  output$option2_buttons <- renderUI({
+    if (!option1_selected()) {
+      return(div(style = "display:none;"))
+    }
+
+    group0 <- selected_group0()
+    valid_choices <- option2_choices_for_group(group0)
+    button_style <- paste(
+      "background-color: #e6f4ff;",
+      "color: #0f3b66;",
+      "border: 1px solid #0f3b66;",
+      "border-radius: 20px;",
+      "padding: 6px 18px;",
+      "font-weight: 600;"
+    )
+
+    option_button <- function(id, label, value) {
+      btn_class <- if (identical(selected_groupA(), value)) {
+        "pill-button active"
+      } else {
+        "pill-button"
+      }
+
+      tags$div(
+        style = "display: flex; flex-direction: column; gap: 4px;",
+        actionButton(ns(id), label, class = btn_class, style = button_style)
+      )
+    }
+
+    tags$div(
+      style = "display: flex; flex-direction: column; gap: 8px;",
+      tags$span("Option 2:", style = "font-weight: bold; color: #b0b0b0; font-size: 14px;"),
+      if ("total" %in% valid_choices) option_button("btn_total", "TOTAL", "total"),
+      if ("payer" %in% valid_choices) option_button("btn_payer", "BY PAYER", "payer"),
+      if ("component" %in% valid_choices) option_button("btn_component", "BY COMPONENT", "component")
+    )
   })
   
   
