@@ -12,7 +12,7 @@ source("tabs/ui/forthcoming.R", local = TRUE)
 # ============================
 
 shinyUI(
-  fluidPage(
+    fluidPage(
     shinyjs::useShinyjs(),
     
     # ---- HEAD ----

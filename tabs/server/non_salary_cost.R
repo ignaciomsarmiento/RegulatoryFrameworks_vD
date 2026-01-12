@@ -2218,7 +2218,7 @@ labor_server <- function(input, output, session) {
       
       div(
         class = "horizontal-container",
-        style = "display:flex; align-items:center; justify-content:space-between; width:100%;",
+        style = "display:flex; align-items:flex-start; justify-content:space-between; width:100%;",
         
         # ---- titulo ----
         div(
@@ -2300,7 +2300,7 @@ labor_server <- function(input, output, session) {
     else if (groupC == "bonuses_and_benefits" & groupA =="component") {
       div(
         class = "horizontal-container",
-        style = "display:flex; align-items:center; justify-content:space-between; width:100%;",
+        style = "display:flex; align-items:flex-start; justify-content:space-between; width:100%;",
         
         # ---- título ----
         div(
