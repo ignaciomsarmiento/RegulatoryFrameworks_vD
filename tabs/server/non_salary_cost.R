@@ -2167,6 +2167,9 @@ labor_server <- function(input, output, session) {
     }
 
     group0 <- selected_group0()
+    if (group0 == "payroll_taxes") {
+      return(div(style = "display:none;"))
+    }
     valid_choices <- option2_choices_for_group(group0)
     button_style <- paste(
       "background-color: #e6f4ff;",
