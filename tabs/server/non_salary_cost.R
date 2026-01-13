@@ -35,8 +35,108 @@ labor_server <- function(input, output, session) {
   option1_selected <- reactiveVal(FALSE)
   table_visible <- reactiveVal(FALSE)
   plotly_font_family <- "National Park, 'Source Sans Pro', -apple-system, BlinkMacSystemFont, sans-serif"
+  format_wage_label <- function(wage_code) {
+    paste0(substr(wage_code, 1, nchar(wage_code) - 2), " MW")
+  }
+  format_countries_label <- function(countries) {
+    if (is.null(countries) || length(countries) == 0 || "All" %in% countries) {
+      return("Countries: All")
+    }
+    if (length(countries) == 1) {
+      return(paste0("Country: ", countries[1]))
+    }
+    if (length(countries) == 2) {
+      return(paste0("Countries: ", paste(countries, collapse = ", ")))
+    }
+    paste0("Countries: ", paste(countries[1:2], collapse = ", "), " +", length(countries) - 2, " more")
+  }
+  plot_title_text <- function() {
+    group0_label <- switch(
+      selected_group0(),
+      all = "All components",
+      bonuses_and_benefits = "Bonuses and benefits",
+      social = "Social security contributions",
+      payroll_taxes = "Payroll taxes",
+      "All components"
+    )
+    groupA_label <- switch(
+      selected_groupA(),
+      total = "Total",
+      payer = "By payer",
+      component = "By component",
+      "Total"
+    )
+
+    component_label <- NULL
+    if (selected_groupA() == "component") {
+      if (selected_group0() == "bonuses_and_benefits") {
+        component_label <- switch(
+          selected_groupD(),
+          all_bonuses = NULL,
+          ab = "Annual and other bonuses",
+          pl = "Paid leave",
+          up = "Unemployment protection",
+          ob = "Other bonuses and benefits",
+          NULL
+        )
+      } else if (selected_group0() == "social") {
+        component_label <- switch(
+          selected_groupE(),
+          pensions = "Pension",
+          health = "Health",
+          occupational_risk = "Occupational risk",
+          NULL
+        )
+      }
+    }
+
+    country_label <- format_countries_label(ns_variables$country_sel)
+    country_text <- sub("^Country: ", "", sub("^Countries: ", "", country_label))
+    wage_label <- format_wage_label(selected_groupB())
+
+    title <- paste0(
+      "Non-salary labor costs for ", group0_label,
+      if (!is.null(component_label)) paste0(" (", component_label, ")") else "",
+      ", viewed as ", groupA_label,
+      ", at ", wage_label,
+      ", in ", country_text, "."
+    )
+    title
+  }
+  y_axis_title_text <- function() {
+    group0 <- selected_group0()
+
+    if (group0 == "bonuses_and_benefits") {
+      return("Bonuses and benefits as share of wages (%)")
+    }
+    if (group0 == "social") {
+      groupE <- selected_groupE()
+      if (groupE == "pensions") {
+        return("Pension contribution as share of wages (%)")
+      }
+      if (groupE == "health") {
+        return("Health contribution as share of wages (%)")
+      }
+      if (groupE == "occupational_risk") {
+        return("Occupational risk as share of wages (%)")
+      }
+      return("Social security contributions as share of wages (%)")
+    }
+    if (group0 == "payroll_taxes") {
+      return("Payroll taxes as share of wages (%)")
+    }
+    "Non-salary costs as share of wages (%)"
+  }
   apply_plot_font <- function(fig) {
-    fig %>% layout(font = list(family = plotly_font_family))
+    fig %>% layout(
+      font = list(family = plotly_font_family),
+      title = list(
+        text = plot_title_text(),
+        x = 0.5,
+        xanchor = "center"
+      ),
+      margin = list(t = 60)
+    )
   }
   
   
@@ -143,6 +243,7 @@ labor_server <- function(input, output, session) {
     
     # Transform value from button "1sm" → "1 MW"
     wage_filter<-paste0(substr(groupB, 1, nchar(groupB) - 2), " MW")
+    y_axis_title <- y_axis_title_text()
     
     
     # ---- ALL and Total ----
@@ -218,7 +319,7 @@ labor_server <- function(input, output, session) {
               ),
               
               yaxis = list(
-                title = ifelse(i == 1, "Non-salary costs as % of wages", ""),
+                title = ifelse(i == 1, y_axis_title, ""),
                 showgrid = FALSE,
                 zeroline = FALSE,
                 showline = FALSE
@@ -311,7 +412,7 @@ labor_server <- function(input, output, session) {
               ),
               
               yaxis = list(
-                title = ifelse(i == 1, "Non-salary costs as % of wages", ""),
+                title = ifelse(i == 1, y_axis_title, ""),
                 showgrid = FALSE,
                 zeroline = FALSE,
                 showline = FALSE
@@ -414,7 +515,7 @@ labor_server <- function(input, output, session) {
             ),
             
             yaxis = list(
-              title = ifelse(i == 1, "Non-salary costs as % of wages", ""),
+              title = ifelse(i == 1, y_axis_title, ""),
               showgrid = FALSE,
               zeroline = FALSE,
               showline = FALSE
@@ -509,7 +610,7 @@ labor_server <- function(input, output, session) {
               ),
               
               yaxis = list(
-                title = ifelse(i == 1, "Non-salary costs as % of wages", ""),
+                title = ifelse(i == 1, y_axis_title, ""),
                 showgrid = FALSE,
                 zeroline = FALSE,
                 showline = FALSE
@@ -613,7 +714,7 @@ labor_server <- function(input, output, session) {
               ),
               
               yaxis = list(
-                title = ifelse(i == 1, "Non-salary costs as % of wages", ""),
+                title = ifelse(i == 1, y_axis_title, ""),
                 showgrid = FALSE,
                 zeroline = FALSE,
                 showline = FALSE
@@ -718,7 +819,7 @@ labor_server <- function(input, output, session) {
               showline = FALSE
             ),
             yaxis = list(
-              title = ifelse(i == 1, "Non-salary costs as % of wages", ""),
+              title = ifelse(i == 1, y_axis_title, ""),
               range = c(0, 140),
               showgrid = FALSE,
               zeroline = FALSE,
@@ -833,7 +934,7 @@ labor_server <- function(input, output, session) {
               ),
               
               yaxis = list(
-                title = ifelse(i == 1, "Non-salary costs as % of wages", ""),
+                title = ifelse(i == 1, y_axis_title, ""),
                 showgrid = FALSE,
                 zeroline = FALSE,
                 showline = FALSE
@@ -940,7 +1041,7 @@ labor_server <- function(input, output, session) {
               ),
               
               yaxis = list(
-                title = ifelse(i == 1, "Non-salary costs as % of wages", ""),
+                title = ifelse(i == 1, y_axis_title, ""),
                 showgrid = FALSE,
                 zeroline = FALSE,
                 showline = FALSE
@@ -1043,7 +1144,7 @@ labor_server <- function(input, output, session) {
               showline = FALSE
             ),
             yaxis = list(
-              title = ifelse(i == 1, "Non-salary costs as % of wages", ""),
+              title = ifelse(i == 1, y_axis_title, ""),
               range = c(0, 140),
               showgrid = FALSE,
               zeroline = FALSE,
@@ -1166,7 +1267,7 @@ labor_server <- function(input, output, session) {
               ),
               
               yaxis = list(
-                title = ifelse(i == 1, "Non-salary costs as % of wages", ""),
+                title = ifelse(i == 1, y_axis_title, ""),
                 showgrid = FALSE,
                 zeroline = FALSE,
                 showline = FALSE
@@ -1269,7 +1370,7 @@ labor_server <- function(input, output, session) {
               ),
               
               yaxis = list(
-                title = ifelse(i == 1, "Non-salary costs as % of wages", ""),
+                title = ifelse(i == 1, y_axis_title, ""),
                 showgrid = FALSE,
                 zeroline = FALSE,
                 showline = FALSE
@@ -1378,7 +1479,7 @@ labor_server <- function(input, output, session) {
               ),
               
               yaxis = list(
-                title = ifelse(i == 1, "Non-salary costs as % of wages", ""),
+                title = ifelse(i == 1, y_axis_title, ""),
                 showgrid = FALSE,
                 zeroline = FALSE,
                 showline = FALSE
@@ -1481,7 +1582,7 @@ labor_server <- function(input, output, session) {
               ),
               
               yaxis = list(
-                title = ifelse(i == 1, "Non-salary costs as % of wages", ""),
+                title = ifelse(i == 1, y_axis_title, ""),
                 showgrid = FALSE,
                 zeroline = FALSE,
                 showline = FALSE
@@ -1596,7 +1697,7 @@ labor_server <- function(input, output, session) {
               ),
               
               yaxis = list(
-                title = ifelse(i == 1, "Non-salary costs as % of wages", ""),
+                title = ifelse(i == 1, y_axis_title, ""),
                 showgrid = FALSE,
                 zeroline = FALSE,
                 showline = FALSE
@@ -1746,7 +1847,7 @@ labor_server <- function(input, output, session) {
               ),
               
               yaxis = list(
-                title = ifelse(i == 1, "Non-salary costs as % of wages", ""),
+                title = ifelse(i == 1, y_axis_title, ""),
                 showgrid = FALSE,
                 zeroline = FALSE,
                 showline = FALSE
@@ -1878,7 +1979,7 @@ labor_server <- function(input, output, session) {
               ),
               
               yaxis = list(
-                title = ifelse(i == 1, "Non-salary costs as % of wages", ""),
+                title = ifelse(i == 1, y_axis_title, ""),
                 showgrid = FALSE,
                 zeroline = FALSE,
                 showline = FALSE
@@ -2017,7 +2118,7 @@ labor_server <- function(input, output, session) {
             ),
             
             yaxis = list(
-              title = ifelse(i == 1, "Non-salary costs as % of wages", ""),
+              title = ifelse(i == 1, y_axis_title, ""),
               showgrid = FALSE,
               zeroline = FALSE,
               showline = FALSE
@@ -2464,7 +2565,7 @@ labor_server <- function(input, output, session) {
   
   output$download_df <- downloadHandler(
     filename = function() {
-      paste0("data_", Sys.Date(), ".csv")
+      paste0("Regulatory_Frameworks_Data_", Sys.Date(), ".csv")
     },
     content = function(file) {
       write.csv(ns_variables$df_final, file, row.names = FALSE)
@@ -2485,7 +2586,7 @@ labor_server <- function(input, output, session) {
   
   output$download_table <- downloadHandler(
     filename = function() {
-      paste0("data_", Sys.Date(), ".csv")
+      paste0("Regulatory_Frameworks_Legislation_", Sys.Date(), ".csv")
     },
     content = function(file) {
       write.csv(ns_variables$df_final_tabla, file, row.names = FALSE)
