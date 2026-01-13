@@ -35,73 +35,119 @@ labor_server <- function(input, output, session) {
   option1_selected <- reactiveVal(FALSE)
   table_visible <- reactiveVal(FALSE)
   plotly_font_family <- "National Park, 'Source Sans Pro', -apple-system, BlinkMacSystemFont, sans-serif"
+  country_name_map <- c(
+    ARG = "Argentina",
+    BOL = "Bolivia",
+    BRA = "Brazil",
+    CHL = "Chile",
+    COL = "Colombia",
+    CRI = "Costa Rica",
+    DOM = "Dominican Republic",
+    ECU = "Ecuador",
+    SLV = "El Salvador",
+    GTM = "Guatemala",
+    HND = "Honduras",
+    MEX = "Mexico",
+    NIC = "Nicaragua",
+    PAN = "Panama",
+    PRY = "Paraguay",
+    PER = "Peru",
+    URY = "Uruguay",
+    VEN = "Venezuela"
+  )
+  country_display_name <- function(country_code) {
+    if (is.null(country_code) || country_code == "") {
+      return(country_code)
+    }
+    code <- toupper(country_code)
+    mapped <- country_name_map[[code]]
+    if (!is.null(mapped)) {
+      return(mapped)
+    }
+    country_code
+  }
   format_wage_label <- function(wage_code) {
     paste0(substr(wage_code, 1, nchar(wage_code) - 2), " MW")
   }
-  format_countries_label <- function(countries) {
+  format_wage_phrase <- function(wage_code) {
+    wage_value <- suppressWarnings(as.integer(sub("sm", "", wage_code)))
+    wage_word <- switch(
+      as.character(wage_value),
+      "1" = "one",
+      "2" = "two",
+      "5" = "five",
+      "10" = "ten",
+      "15" = "fifteen",
+      as.character(wage_value)
+    )
+    if (is.na(wage_value)) {
+      return(format_wage_label(wage_code))
+    }
+    if (wage_value == 1) {
+      return(paste(wage_word, "minimum wage"))
+    }
+    paste(wage_word, "minimum wages")
+  }
+  format_country_phrase <- function(countries) {
     if (is.null(countries) || length(countries) == 0 || "All" %in% countries) {
-      return("Countries: All")
+      return("across countries")
     }
     if (length(countries) == 1) {
-      return(paste0("Country: ", countries[1]))
+      return(paste0("in ", country_display_name(countries[1])))
     }
-    if (length(countries) == 2) {
-      return(paste0("Countries: ", paste(countries, collapse = ", ")))
-    }
-    paste0("Countries: ", paste(countries[1:2], collapse = ", "), " +", length(countries) - 2, " more")
+    "across selected countries"
   }
   plot_title_text <- function() {
-    group0_label <- switch(
+    subject <- switch(
       selected_group0(),
-      all = "All components",
+      all = "Non-salary labor costs",
       bonuses_and_benefits = "Bonuses and benefits",
-      social = "Social security contributions",
+      social = switch(
+        selected_groupE(),
+        pensions = "Pension contributions",
+        health = "Health contributions",
+        occupational_risk = "Occupational risk contributions",
+        "Social security contributions"
+      ),
       payroll_taxes = "Payroll taxes",
-      "All components"
-    )
-    groupA_label <- switch(
-      selected_groupA(),
-      total = "Total",
-      payer = "By payer",
-      component = "By component",
-      "Total"
+      "Non-salary labor costs"
     )
 
-    component_label <- NULL
-    if (selected_groupA() == "component") {
-      if (selected_group0() == "bonuses_and_benefits") {
-        component_label <- switch(
-          selected_groupD(),
-          all_bonuses = NULL,
-          ab = "Annual and other bonuses",
-          pl = "Paid leave",
-          up = "Unemployment protection",
-          ob = "Other bonuses and benefits",
-          NULL
-        )
-      } else if (selected_group0() == "social") {
-        component_label <- switch(
-          selected_groupE(),
-          pensions = "Pension",
-          health = "Health",
-          occupational_risk = "Occupational risk",
-          NULL
-        )
+    if (selected_group0() == "bonuses_and_benefits" && selected_groupA() == "component") {
+      subject <- switch(
+        selected_groupD(),
+        all_bonuses = "Bonuses and benefits",
+        ab = "Annual and other bonuses",
+        pl = "Paid leave",
+        up = "Unemployment protection",
+        ob = "Other bonuses and benefits",
+        subject
+      )
+    }
+
+    view_phrase <- ""
+    if (selected_groupA() == "payer") {
+      view_phrase <- " by payer"
+    } else if (selected_groupA() == "component") {
+      if (selected_group0() == "all") {
+        view_phrase <- " by component"
+      } else if (selected_group0() == "bonuses_and_benefits" && selected_groupD() == "all_bonuses") {
+        view_phrase <- " by component"
       }
     }
 
-    country_label <- format_countries_label(ns_variables$country_sel)
-    country_text <- sub("^Country: ", "", sub("^Countries: ", "", country_label))
-    wage_label <- format_wage_label(selected_groupB())
+    country_phrase <- format_country_phrase(ns_variables$country_sel)
+    wage_phrase <- format_wage_phrase(selected_groupB())
 
-    title <- paste0(
-      "Non-salary labor costs for ", group0_label,
-      if (!is.null(component_label)) paste0(" (", component_label, ")") else "",
-      ", viewed as ", groupA_label,
-      ", at ", wage_label,
-      ", in ", country_text, "."
+    paste0(
+      subject,
+      view_phrase,
+      " ",
+      country_phrase,
+      " as a percentage of ",
+      wage_phrase,
+      " (%)"
     )
-    title
   }
   y_axis_title_text <- function() {
     group0 <- selected_group0()
@@ -126,6 +172,36 @@ labor_server <- function(input, output, session) {
       return("Payroll taxes as share of wages (%)")
     }
     "Non-salary costs as share of wages (%)"
+    }
+  plot_footer_annotations <- function() {
+    access_date <- format(Sys.Date(), "%Y-%m-%d")
+    list(
+      list(
+        text = "Note: TBD",
+        xref = "paper",
+        yref = "paper",
+        x = 0,
+        y = -0.23,
+        xanchor = "left",
+        yanchor = "top",
+        showarrow = FALSE,
+        font = list(family = plotly_font_family, size = 10)
+      ),
+      list(
+        text = paste0(
+          "Source: World Bank, Regulatory Frameworks Database, 2026. Access date: ",
+          access_date
+        ),
+        xref = "paper",
+        yref = "paper",
+        x = 0,
+        y = -0.31,
+        xanchor = "left",
+        yanchor = "top",
+        showarrow = FALSE,
+        font = list(family = plotly_font_family, size = 10)
+      )
+    )
   }
   apply_plot_font <- function(fig) {
     fig %>% layout(
@@ -135,7 +211,8 @@ labor_server <- function(input, output, session) {
         x = 0.5,
         xanchor = "center"
       ),
-      margin = list(t = 60)
+      annotations = plot_footer_annotations(),
+      margin = list(t = 60, b = 140)
     )
   }
   
