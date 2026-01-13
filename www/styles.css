@@ -1035,18 +1035,19 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  text-align: center;
 }
 
 .landing-card-grid.small .landing-card-body h3 {
   margin: 0 0 6px 0;
-  font-size: var(--fs-explore-card-title);
+  font-size: calc(var(--fs-explore-card-title) - 1pt);
   line-height: 1.1;
   color: var(--solid-blue);
 }
 
 .landing-card-grid.small .landing-card-body p {
   margin: 0;
-  font-size: var(--fs-explore-card-desc);
+  font-size: calc(var(--fs-explore-card-desc) - 1pt);
   line-height: 1.35;
   color: var(--solid-blue-60);
 }

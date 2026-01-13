@@ -391,7 +391,6 @@ shinyUI(
                   href = "#",
                   class = "landing-card",
                   onclick = "document.querySelector('a[data-value=\"Guide\"]').click(); return false;",
-                  tags$div(class = "landing-card-image", style = "background-image: url('about-circle.png');"),
                   tags$div(
                     class = "landing-card-body",
                     h3("Guide"),
@@ -403,7 +402,6 @@ shinyUI(
                   href = "#",
                   class = "landing-card",
                   onclick = "document.querySelector('a[data-value=\"About\"]').click(); return false;",
-                  tags$div(class = "landing-card-image", style = "background-image: url('about-circle.png');"),
                   tags$div(
                     class = "landing-card-body",
                     h3("About"),
