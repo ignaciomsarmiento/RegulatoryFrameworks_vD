@@ -373,7 +373,7 @@ shinyUI(
                   tags$div(class = "topic-card-image btax-img"),
                   tags$div(
                     class = "landing-card-body",
-                    h3("Business taxes"),
+                    h3("Business Taxes"),
                     p("Explore business tax rates and regulations")
                   )
                 )
