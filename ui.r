@@ -444,6 +444,10 @@ shinyUI(
           div(
             class = "content-area",
             uiOutput("dynamic_content")
+          ),
+          tags$div(
+            class = "footer",
+            tags$p(class = "footer-text", "© 2026 World Bank Group")
           )
         )
       )
