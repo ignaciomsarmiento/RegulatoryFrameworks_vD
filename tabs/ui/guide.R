@@ -2,7 +2,7 @@ guide <- tags$div(
   class = "main-content",
   
   # Hero Banner
-  tags$div(class = "hero-banner"),
+  #tags$div(class = "hero-banner"),
   
   # Page Section
   tags$div(
