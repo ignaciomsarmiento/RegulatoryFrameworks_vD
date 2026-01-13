@@ -34,6 +34,7 @@ labor_server <- function(input, output, session) {
   selected_groupE <- reactiveVal("pensions")
   option1_selected <- reactiveVal(FALSE)
   table_visible <- reactiveVal(FALSE)
+  last_country_selection <- reactiveVal("All")
   plotly_font_family <- "National Park, 'Source Sans Pro', -apple-system, BlinkMacSystemFont, sans-serif"
   country_name_map <- c(
     ARG = "Argentina",
@@ -44,6 +45,7 @@ labor_server <- function(input, output, session) {
     CRI = "Costa Rica",
     DOM = "Dominican Republic",
     ECU = "Ecuador",
+    ESP = "Spain",
     SLV = "El Salvador",
     GTM = "Guatemala",
     HND = "Honduras",
@@ -53,6 +55,7 @@ labor_server <- function(input, output, session) {
     PRY = "Paraguay",
     PER = "Peru",
     URY = "Uruguay",
+    US = "United States",
     VEN = "Venezuela"
   )
   country_display_name <- function(country_code) {
@@ -181,7 +184,7 @@ labor_server <- function(input, output, session) {
         xref = "paper",
         yref = "paper",
         x = 0,
-        y = -0.23,
+        y = -0.26,
         xanchor = "left",
         yanchor = "top",
         showarrow = FALSE,
@@ -195,7 +198,7 @@ labor_server <- function(input, output, session) {
         xref = "paper",
         yref = "paper",
         x = 0,
-        y = -0.31,
+        y = -0.34,
         xanchor = "left",
         yanchor = "top",
         showarrow = FALSE,
@@ -212,7 +215,7 @@ labor_server <- function(input, output, session) {
         xanchor = "center"
       ),
       annotations = plot_footer_annotations(),
-      margin = list(t = 60, b = 140)
+      margin = list(t = 60, b = 155)
     )
   }
   
@@ -242,8 +245,27 @@ labor_server <- function(input, output, session) {
     selected_groupC("all_component")
     option1_selected(TRUE)
   })
-  observeEvent(input$country_selection_user,  { 
-    ns_variables$country_sel=input$country_selection_user
+  observeEvent(input$country_selection_user, {
+    selection <- input$country_selection_user
+    if (is.null(selection) || length(selection) == 0) {
+      selection <- "All"
+    }
+
+    previous <- last_country_selection()
+    if ("All" %in% selection && length(selection) > 1) {
+      if (!("All" %in% previous)) {
+        selection <- "All"
+      } else {
+        selection <- setdiff(selection, "All")
+      }
+    }
+
+    if (!identical(selection, input$country_selection_user)) {
+      updateSelectizeInput(session, ns("country_selection_user"), selected = selection)
+    }
+
+    ns_variables$country_sel <- selection
+    last_country_selection(selection)
   })
 
   option2_choices_for_group <- function(group0) {

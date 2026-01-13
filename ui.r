@@ -415,7 +415,7 @@ shinyUI(
             
             tags$div(
               class = "footer",
-              tags$p(class = "footer-text", "© 2025 World Bank Group")
+              tags$p(class = "footer-text", "© 2026 World Bank Group")
             )
           )
         ),
