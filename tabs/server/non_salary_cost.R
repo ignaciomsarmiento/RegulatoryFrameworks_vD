@@ -207,7 +207,9 @@ labor_server <- function(input, output, session) {
     )
   }
   apply_plot_font <- function(fig) {
-    fig %>% layout(
+    fig %>%
+      plotly::style(hovertemplate = "%{x}<br>%{y:.2f}<extra></extra>") %>%
+      layout(
       font = list(family = plotly_font_family),
       title = list(
         text = plot_title_text(),
